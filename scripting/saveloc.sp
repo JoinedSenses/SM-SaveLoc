@@ -173,7 +173,7 @@ public Action cmdEnable(int client, int args) {
 		return Plugin_Handled;
 	}
 
-	if (g_cvarRequireOnGround.BoolValue && !g_bEnabled[client] && !(GetEntityFlags(client) & FL_ONGROUND)) {
+	if (!g_bEnabled[client] && g_cvarRequireOnGround.BoolValue && !(GetEntityFlags(client) & FL_ONGROUND)) {
 		PrintMessageToClient(client, "Must be on the ground to enable");
 		return Plugin_Handled;
 	}
