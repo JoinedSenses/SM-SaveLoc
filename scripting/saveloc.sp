@@ -126,6 +126,7 @@ public Action eventPlayerChangeTeam(Event event, const char[] name, bool dontBro
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	if (!IsFakeClient(client)) {
 		ClearClientSettings(client);
+		g_bEnabled[client] = false;
 	}
 }
 
@@ -136,6 +137,7 @@ public Action eventPlayerChangeClass(Event event, const char[] name, bool dontBr
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	if (!IsFakeClient(client)) {
 		ClearClientSettings(client);
+		g_bEnabled[client] = false;
 	}
 	return Plugin_Continue;
 }
