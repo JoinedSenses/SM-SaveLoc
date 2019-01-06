@@ -107,6 +107,13 @@ public void OnPluginStart() {
 	g_bTF2 = StrEqual(gamename, "tf", false);
 
 
+	if (g_bTF2 && g_cvarCustomColor.BoolValue) {
+		HookEvent("player_changeclass", eventPlayerChangeClass);
+	}
+	else {
+		HookEvent("player_class", eventPlayerChangeClass);
+	}
+
 	FormatColors();
 
 	HookEvent("player_team", eventPlayerChangeTeam);
@@ -543,14 +550,10 @@ public int Native_ClearAllSaves(Handle plugin, int numParams) {
 
 void FormatColors() {
 	if (g_bTF2 && g_cvarCustomColor.BoolValue) {
-		HookEvent("player_changeclass", eventPlayerChangeClass);
-
 		Format(THEMECOLOR1, sizeof(THEMECOLOR1), CUSTOMCOLOR1);
 		Format(THEMECOLOR2, sizeof(THEMECOLOR2), CUSTOMCOLOR2);
 	}
 	else {
-		HookEvent("player_class", eventPlayerChangeClass);
-
 		Format(THEMECOLOR1, sizeof(THEMECOLOR1), DEFAULTCOLOR);
 		Format(THEMECOLOR2, sizeof(THEMECOLOR2), DEFAULTCOLOR);
 	}
