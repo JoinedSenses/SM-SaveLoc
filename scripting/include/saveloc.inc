@@ -68,7 +68,7 @@ native void SL_ClearAllSaves(int client);
  * @return				Plugin_Handled to prevent saving
  * 						Plugin_Continue to resume
  */
-forward Action SL_OnEnable(int client);
+forward Action SL_OnPracticeToggle(int client);
 
 /**
  * Called just before client loc data is about to be saved

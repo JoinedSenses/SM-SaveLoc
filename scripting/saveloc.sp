@@ -79,7 +79,7 @@ public void OnPluginStart() {
 	RegConsoleCmd("sm_ml", cmdSetLoc, "Select from a list of recent saves - sm_ml <optional:targetname>");
 	RegConsoleCmd("sm_rl", cmdRemoveLoc, "Remove from a list of recent saves - sm_rl");
 
-	g_hForwardOnEnable = CreateGlobalForward("SL_OnEnable", ET_Event, Param_Cell);
+	g_hForwardOnEnable = CreateGlobalForward("SL_OnPracticeToggle", ET_Event, Param_Cell);
 	g_hForwardOnSaveLoc = CreateGlobalForward("SL_OnSaveLoc", ET_Event, Param_Cell, Param_Array, Param_Array, Param_Array, Param_Float);
 	g_hForwardOnTeleLoc = CreateGlobalForward("SL_OnTeleLoc", ET_Event, Param_Cell);
 
