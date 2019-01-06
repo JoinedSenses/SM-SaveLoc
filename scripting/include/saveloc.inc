@@ -62,6 +62,15 @@ native int SL_AddToSaves(int client, float origin[3], float angles[3], float vel
 native void SL_ClearAllSaves(int client);
 
 /**
+ * Called just as a client is about to toggle practice mode
+ *
+ * @param client		Client index
+ * @return				Plugin_Handled to prevent saving
+ * 						Plugin_Continue to resume
+ */
+forward Action SL_OnEnable(int client);
+
+/**
  * Called just before client loc data is about to be saved
  *
  * @param client		Client index

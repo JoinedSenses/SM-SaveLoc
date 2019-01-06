@@ -26,6 +26,7 @@ ArrayList g_aVelocity[MAXPLAYERS+1];
 ArrayList g_aTime[MAXPLAYERS+1];
 
 // Forwards
+Handle g_hForwardOnEnable;
 Handle g_hForwardOnSaveLoc;
 Handle g_hForwardOnTeleLoc;
 
@@ -78,6 +79,7 @@ public void OnPluginStart() {
 	RegConsoleCmd("sm_ml", cmdSetLoc, "Select from a list of recent saves - sm_ml <optional:targetname>");
 	RegConsoleCmd("sm_rl", cmdRemoveLoc, "Remove from a list of recent saves - sm_rl");
 
+	g_hForwardOnEnable = CreateGlobalForward("SL_OnEnable", ET_Event, Param_Cell);
 	g_hForwardOnSaveLoc = CreateGlobalForward("SL_OnSaveLoc", ET_Event, Param_Cell, Param_Array, Param_Array, Param_Array, Param_Float);
 	g_hForwardOnTeleLoc = CreateGlobalForward("SL_OnTeleLoc", ET_Event, Param_Cell);
 
@@ -144,6 +146,16 @@ public Action cmdEnable(int client, int args) {
 	if (!g_cvarRequireEnable.BoolValue) {
 		return Plugin_Handled;
 	}
+
+	Action result;
+	Call_StartForward(g_hForwardOnEnable);
+	Call_PushCell(client);
+	Call_Finish(result);
+
+	if (result >= Plugin_Handled) {
+		return Plugin_Handled;
+	}
+
 	g_bEnabled[client] = !g_bEnabled[client];
 	PrintToChat(client, "\x01[\x03SL\x01] Practice mode\x03 %s", g_bEnabled[client] ? "enabled" : "disabled");
 	ClearClientSettings(client);
@@ -171,7 +183,7 @@ public Action cmdSaveLoc(int client, int args) {
 		return Plugin_Handled;
 	}
 
-	if ((GetClientButtons(client) & IN_DUCK)) {
+	if (GetClientButtons(client) & IN_DUCK) {
 		if (nearGround) {
 			origin[2] += 20.0;
 		}
