@@ -194,6 +194,11 @@ public Action cmdSaveLoc(int client, int args) {
 		return Plugin_Handled;
 	}
 
+	if (GetClientTeam(client) == 1) {
+		PrintMessageToClient(client, "Can't use as%s spectator", THEMECOLOR2);
+		return Plugin_Handled;
+	}
+
 	float origin[3];
 	GetClientAbsOrigin(client, origin);
 
@@ -249,6 +254,11 @@ public Action cmdTeleLoc(int client, int args) {
 
 	if (g_cvarRequireEnable.BoolValue && !IsClientPracticing(client)) {
 		PrintMessageToClient(client, "Type%s /%s\x01 prior to using this command", THEMECOLOR2, COMMAND_PRACTICE);
+		return Plugin_Handled;
+	}
+
+	if (GetClientTeam(client) == 1) {
+		PrintMessageToClient(client, "Can't use as%s spectator", THEMECOLOR2);
 		return Plugin_Handled;
 	}
 
