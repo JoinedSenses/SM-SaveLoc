@@ -487,12 +487,16 @@ public int Native_GetClientCurrentSave(Handle plugin, int numParams) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Client %d is not connected", client);
 	}
 
+	if (IsZeroVector(g_vOrigin[client])) {
+		return false;
+	}
+
 	SetNativeArray(2, g_vOrigin[client], 3);
 	SetNativeArray(3, g_vAngles[client], 3);
 	SetNativeArray(4, g_vVelocity[client], 3);
 	SetNativeCellRef(5, g_fTime[client]);
 
-	return g_fTime[client] > 0.0;
+	return true;
 }
 
 public int Native_GetClientSaveAtIndex(Handle plugin, int numParams) {
