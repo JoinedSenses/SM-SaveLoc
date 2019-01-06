@@ -48,6 +48,7 @@ bool g_bEnabled[MAXPLAYERS+1];
 
 char THEMECOLOR1[16];
 char THEMECOLOR2[16];
+char PLUGINTAG[24];
 
 public Plugin myinfo = {
 	name = "Save Loc",
@@ -557,6 +558,8 @@ void FormatColors() {
 		Format(THEMECOLOR1, sizeof(THEMECOLOR1), DEFAULTCOLOR);
 		Format(THEMECOLOR2, sizeof(THEMECOLOR2), DEFAULTCOLOR);
 	}
+
+	Format(PLUGINTAG, sizeof(PLUGINTAG), MESSAGETAG, THEMECOLOR1);
 }
 
 bool IsClientPracticing(int client) {
@@ -695,12 +698,10 @@ void PrintMessageToClient(int client, char[] message, any ...) {
 	char output[1024];
 	VFormat(output, sizeof(output), message, 3);
 
-	char tag[24];
-	Format(tag, sizeof(tag), MESSAGETAG, THEMECOLOR1);
 	if (g_bTF2 && g_cvarCustomColor.BoolValue) {
-		PrintColoredChat(client, "%s%s", tag, output);
+		PrintColoredChat(client, "%s%s", PLUGINTAG, output);
 	}
 	else {
-		PrintToChat(client, "\x01%s%s", tag, output);
+		PrintToChat(client, "\x01%s%s", PLUGINTAG, output);
 	}
 }
