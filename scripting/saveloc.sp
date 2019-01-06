@@ -55,6 +55,7 @@ public Plugin myinfo = {
 public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max) {
 	RegPluginLibrary("saveloc");
 	CreateNative("SL_IsClientPracticing", Native_IsClientPracticing);
+	CreateNative("SL_DisablePractice", Native_DisablePractice);
 	CreateNative("SL_GetClientTotalCount", Native_GetClientTotalCount);
 	CreateNative("SL_GetClientCurrentIndex", Native_GetClientCurrentIndex);
 	CreateNative("SL_AddToSaves", Native_AddToSaves);
@@ -407,6 +408,23 @@ public int Native_IsClientPracticing(Handle plugin, int numParams) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Client %d is not connected", client);
 	}
 	return g_bEnabled[client];
+}
+
+public int Native_DisablePractice(Handle plugin, int numParams) {
+	int client = GetNativeCell(1);
+	if (client < 1 || client > MaxClients) {
+		return ThrowNativeError(SP_ERROR_NATIVE, "Invalid client index (%d)", client);
+	}
+	if (!IsClientConnected(client)) {
+		return ThrowNativeError(SP_ERROR_NATIVE, "Client %d is not connected", client);
+	}
+	if (g_bEnabled[client]) {
+		g_bEnabled[client] = false;
+		if (GetNativeCell(2)) {
+			ClearClientSettings(client);
+		}
+	}
+	return 1;
 }
 
 public int Native_GetClientTotalCount(Handle plugin, int numParams) {

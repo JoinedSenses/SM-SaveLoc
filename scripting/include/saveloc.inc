@@ -14,6 +14,14 @@
 native bool SL_IsClientPracticing(int client);
 
 /**
+ * Disables practice mode on a client
+ * 
+ * @param client		Client index
+ * @noreturn
+ */
+native void SL_DisablePractice(int client, bool clearSaves = false);
+
+/**
  * Returns how many saves client has
  *
  * @param client		Client index
@@ -120,6 +128,6 @@ public SharedPlugin __pl_saveloc = {
 };
 
 #if !defined REQUIRE_PLUGIN
-public __pl_saveloc_SetNTVOptional() {
+public void __pl_saveloc_SetNTVOptional() {
 }
 #endif
