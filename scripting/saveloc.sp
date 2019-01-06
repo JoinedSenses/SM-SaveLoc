@@ -64,7 +64,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 public void OnPluginStart() {
 	CreateConVar("sm_saveloc_version", PLUGIN_VERSION, PLUGIN_DESCRIPTION, FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD).SetString(PLUGIN_VERSION);
 	g_cvarRequireEnable = CreateConVar("sm_saveloc_requireenable", "1", "Require the client activate a toggle before using commands?", FCVAR_NONE, true, 0.0, true, 1.0);
-	g_cvarAllowOther = CreateConVar("sm_saveloc_allowother", "1", "Allows clients to use other players' saves", FCVAR_NONE, true, 0.0, true, 1.0);
+	g_cvarAllowOther = CreateConVar("sm_saveloc_allowother", "1", "Allows clients to use other players' saves?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarForceSameTeam = CreateConVar("sm_saveloc_forceteam", "1", "Only allow client to use saves from players on their own team?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarForceSameClass = CreateConVar("sm_saveloc_forceclass", "1", "Only allow clients to use saves from players of their own class? (TF2)", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarWipeOnTeam = CreateConVar("sm_saveloc_wipeonteam", "1", "Should the plugin wipe saves on team change?", FCVAR_NONE, true, 0.0, true, 1.0);
@@ -161,11 +161,6 @@ public Action cmdSaveLoc(int client, int args) {
 
 	float origin[3];
 	GetClientAbsOrigin(client, origin);
-
-	if (GetEntityFlags(client) & FL_ONGROUND) {
-		PrintToChat(client, "\x01[\x03SL\x01] Can't save while on ground");
-		return Plugin_Handled;
-	}
 
 	bool nearGround = GetClientDistanceToGround(client) <= 20.0;
 	bool nearCeiling = GetClientDistanceToCeiling(client) <= 25.0;
