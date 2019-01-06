@@ -8,7 +8,7 @@
 #include <tf2_stocks>
 #define REQUIRE_PLUGIN
 
-#define PLUGIN_VERSION "0.2.0"
+#define PLUGIN_VERSION "0.2.1"
 #define PLUGIN_DESCRIPTION "Retain position, angle, and velocity data"
 #define COMMAND_PRACTICE "practice"
 
@@ -60,6 +60,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 	CreateNative("SL_GetClientCurrentIndex", Native_GetClientCurrentIndex);
 	CreateNative("SL_AddToSaves", Native_AddToSaves);
 	CreateNative("SL_GetClientCurrentSave", Native_GetClientCurrentSave);
+	CreateNative("SL_GetClientSaveAtIndex", Native_GetClientSaveAtIndex);
 	CreateNative("SL_ClearAllSaves", Native_ClearAllSaves);
 }
 
@@ -464,6 +465,31 @@ public int Native_GetClientCurrentSave(Handle plugin, int numParams) {
 	SetNativeCellRef(5, g_fTime[client]);
 
 	return g_fTime[client] > 0.0;
+}
+
+public int Native_GetClientSaveAtIndex(Handle plugin, int numParams) {
+	int client = GetNativeCell(1);
+	if (client < 1 || client > MaxClients) {
+		return ThrowNativeError(SP_ERROR_NATIVE, "Invalid client index (%d)", client);
+	}
+	if (!IsClientConnected(client)) {
+		return ThrowNativeError(SP_ERROR_NATIVE, "Client %d is not connected", client);
+	}
+	int index = GetNativeCell(2);
+	if (index < 0 || index >= g_iCount[client]) {
+		return false;
+	}
+	float origin[3];
+	float angles[3];
+	float velocity[3];
+	float time;
+	GetClientSave(client, index, origin, angles, velocity, time);
+
+	SetNativeArray(2, origin, 3);
+	SetNativeArray(3, angles, 3);
+	SetNativeArray(4, velocity, 3);
+	SetNativeCellRef(5, time);
+	return true;
 }
 
 public int Native_AddToSaves(Handle plugin, int numParams) {

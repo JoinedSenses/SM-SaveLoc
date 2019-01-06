@@ -46,7 +46,19 @@ native int SL_GetClientCurrentIndex(int client);
  * @param velocity		Velocity
  * @return				Save loc num as an index (0 - MAX_RECENT_LOCS). -1 if no current
  */
-native bool SL_GetClientCurrentSave(int client, float origin[3], float angles[3], float velocity[3], float &time = 0.0);
+native int SL_GetClientCurrentSave(int client, float origin[3], float angles[3], float velocity[3], float &time = 0.0);
+
+/**
+ * Returns client's stored position at a specific index
+ *
+ * @param client		Client index
+ * @param index			Index to use (0 - MAX_RECENT_LOCS-1)
+ * @param origin		Origin
+ * @param angles		Eye angles
+ * @param velocity		Velocity
+ * @return				True if retrieved, else false
+ */
+native bool SL_GetClientSaveAtIndex(int client, int index, float origin[3], float angles[3], float velocity[3], float &time = 0.0);
 
 /**
  * Insert a save into the cliends recent saves
