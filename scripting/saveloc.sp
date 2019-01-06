@@ -9,11 +9,12 @@
 #include <tf2_stocks>
 #define REQUIRE_PLUGIN
 
-#define PLUGIN_VERSION "0.2.3"
+#define PLUGIN_VERSION "0.2.4"
 #define PLUGIN_DESCRIPTION "Retain position, angle, and velocity data"
 #define COMMAND_PRACTICE "practice"
 
 ConVar g_cvarRequireEnable;
+ConVar g_cvarRequireOnGround;
 ConVar g_cvarAllowOther;
 ConVar g_cvarForceSameTeam;
 ConVar g_cvarForceSameClass;
@@ -74,6 +75,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 public void OnPluginStart() {
 	CreateConVar("sm_saveloc_version", PLUGIN_VERSION, PLUGIN_DESCRIPTION, FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD).SetString(PLUGIN_VERSION);
 	g_cvarRequireEnable = CreateConVar("sm_saveloc_requireenable", "1", "Require the client activate a toggle before using commands?", FCVAR_NONE, true, 0.0, true, 1.0);
+	g_cvarRequireOnGround = CreateConVar("sm_saveloc_onground", "1", "Require the client to be on the ground while enabling practice toggle?");
 	g_cvarAllowOther = CreateConVar("sm_saveloc_allowother", "1", "Allows clients to use other players' saves?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarForceSameTeam = CreateConVar("sm_saveloc_forceteam", "1", "Only allow client to use saves from players on their own team?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarForceSameClass = CreateConVar("sm_saveloc_forceclass", "1", "Only allow clients to use saves from players of their own class? (TF2)", FCVAR_NONE, true, 0.0, true, 1.0);
@@ -168,6 +170,11 @@ public Action eventPlayerChangeClass(Event event, const char[] name, bool dontBr
 
 public Action cmdEnable(int client, int args) {
 	if (!g_cvarRequireEnable.BoolValue) {
+		return Plugin_Handled;
+	}
+
+	if (g_cvarRequireOnGround.BoolValue && !g_bEnabled[client] && !(GetEntityFlags(client) & FL_ONGROUND)) {
+		PrintMessageToClient(client, "Must be on the ground to enable");
 		return Plugin_Handled;
 	}
 
