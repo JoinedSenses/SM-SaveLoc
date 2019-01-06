@@ -11,6 +11,7 @@ See include file for plugin integration
 
 ## ConVars
 `sm_saveloc_requireenable "1"` // Require the client activate a toggle before using commands?  
+`sm_saveloc_onground "1"` // Require the client to be on the ground while enabling practice toggle?  
 `sm_saveloc_allowother "1"` // Allows clients to use other players' saves?  
 `sm_saveloc_forceteam "1"` // Only allow client to use saves from players on their own team?  
 `sm_saveloc_forceclass "1"` // Only allow clients to use saves from players of their own class? (TF2)  
