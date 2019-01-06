@@ -146,6 +146,7 @@ public Action cmdEnable(int client, int args) {
 	}
 	g_bEnabled[client] = !g_bEnabled[client];
 	PrintToChat(client, "\x01[\x03SL\x01] Practice mode\x03 %s", g_bEnabled[client] ? "enabled" : "disabled");
+	ClearClientSettings(client);
 	return Plugin_Handled;
 }
 
@@ -593,7 +594,6 @@ float GetClientDistanceToCeiling(int client) {
 		TR_GetEndPosition(fCeiling);
 		return GetVectorDistance(fOrigin, fCeiling);
 	}
-
 
 	return 0.0;
 }
