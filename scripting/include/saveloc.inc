@@ -4,6 +4,10 @@
 #define _saveloc_included_
 
 #define MAX_RECENT_LOCS 10
+#define CUSTOMCOLOR1 "\x0769cfbc"
+#define CUSTOMCOLOR2 "\x07a4e8dc"
+#define DEFAULTCOLOR "\x03"
+#define MESSAGETAG "[%sSL\x01] "
 
 /**
  * Returns if client has practice mode enabled

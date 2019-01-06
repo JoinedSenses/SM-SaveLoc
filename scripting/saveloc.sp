@@ -4,11 +4,12 @@
 #include <sourcemod>
 #include <sdktools>
 #include "saveloc.inc"
+#include "color_literals.inc"
 #undef REQUIRE_PLUGIN
 #include <tf2_stocks>
 #define REQUIRE_PLUGIN
 
-#define PLUGIN_VERSION "0.2.1"
+#define PLUGIN_VERSION "0.2.2"
 #define PLUGIN_DESCRIPTION "Retain position, angle, and velocity data"
 #define COMMAND_PRACTICE "practice"
 
@@ -18,6 +19,7 @@ ConVar g_cvarForceSameTeam;
 ConVar g_cvarForceSameClass;
 ConVar g_cvarWipeOnTeam;
 ConVar g_cvarWipeOnClass;
+ConVar g_cvarCustomColor;
 
 // Stores up to MAX_RECENT_LOCS saves
 ArrayList g_aOrigin[MAXPLAYERS+1];
@@ -43,6 +45,9 @@ float g_fTime[MAXPLAYERS+1];
 
 bool g_bTF2;
 bool g_bEnabled[MAXPLAYERS+1];
+
+char THEMECOLOR1[16];
+char THEMECOLOR2[16];
 
 public Plugin myinfo = {
 	name = "Save Loc",
@@ -72,6 +77,9 @@ public void OnPluginStart() {
 	g_cvarForceSameClass = CreateConVar("sm_saveloc_forceclass", "1", "Only allow clients to use saves from players of their own class? (TF2)", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarWipeOnTeam = CreateConVar("sm_saveloc_wipeonteam", "1", "Should the plugin wipe saves on team change?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarWipeOnClass = CreateConVar("sm_saveloc_wipeonclass", "1", "Should the plugin wipe saves on class change?", FCVAR_NONE, true, 0.0, true, 1.0);
+	g_cvarCustomColor = CreateConVar("sm_saveloc_customcolor", "1", "Should the plugin use custom THEMECOLOR in messages? (TF2)", FCVAR_NONE, true, 0.0, true, 1.0);
+
+	g_cvarCustomColor.AddChangeHook(convarChangedCustomColor);
 
 	char cmd[32];
 	Format(cmd, sizeof(cmd),  "sm_%s", COMMAND_PRACTICE);
@@ -98,12 +106,8 @@ public void OnPluginStart() {
 	GetGameFolderName(gamename, sizeof(gamename));
 	g_bTF2 = StrEqual(gamename, "tf", false);
 
-	if (g_bTF2) {
-		HookEvent("player_changeclass", eventPlayerChangeClass);
-	}
-	else {
-		HookEvent("player_class", eventPlayerChangeClass);
-	}
+
+	FormatColors();
 
 	HookEvent("player_team", eventPlayerChangeTeam);
 	
@@ -119,7 +123,28 @@ public void OnClientConnected(int client) {
 	ClearClientSettings(client);
 }
 
-// ----------------- Events
+void FormatColors() {
+	if (g_bTF2 && g_cvarCustomColor.BoolValue) {
+		HookEvent("player_changeclass", eventPlayerChangeClass);
+
+		Format(THEMECOLOR1, sizeof(THEMECOLOR1), CUSTOMCOLOR1);
+		Format(THEMECOLOR2, sizeof(THEMECOLOR2), CUSTOMCOLOR2);
+	}
+	else {
+		HookEvent("player_class", eventPlayerChangeClass);
+
+		Format(THEMECOLOR1, sizeof(THEMECOLOR1), DEFAULTCOLOR);
+		Format(THEMECOLOR2, sizeof(THEMECOLOR2), DEFAULTCOLOR);
+	}
+}
+
+// ----------------- Events/Hooks
+
+public void convarChangedCustomColor(ConVar convar, const char[] oldValue, const char[] newValue) {
+	g_cvarCustomColor.SetBool(!!StringToInt(newValue));
+
+	FormatColors();
+}
 
 public Action eventPlayerChangeTeam(Event event, const char[] name, bool dontBroadcast) {
 	if (!g_cvarWipeOnTeam.BoolValue) {
@@ -161,7 +186,7 @@ public Action cmdEnable(int client, int args) {
 	}
 
 	g_bEnabled[client] = !g_bEnabled[client];
-	PrintToChat(client, "\x01[\x03SL\x01] Practice mode\x03 %s", g_bEnabled[client] ? "enabled" : "disabled");
+	PrintMessageToClient(client, "Practice mode%s %s", THEMECOLOR2, g_bEnabled[client] ? "enabled" : "disabled");
 	ClearClientSettings(client);
 	return Plugin_Handled;
 }
@@ -172,7 +197,7 @@ public Action cmdSaveLoc(int client, int args) {
 	}
 
 	if (g_cvarRequireEnable.BoolValue && !IsClientPracticing(client)) {
-		PrintToChat(client, "\x01[\x03SL\x01] Type /%s prior to using this command", COMMAND_PRACTICE);
+		PrintMessageToClient(client, "Type%s /%s\x01 prior to using this command", THEMECOLOR2, COMMAND_PRACTICE);
 		return Plugin_Handled;
 	}
 
@@ -183,7 +208,7 @@ public Action cmdSaveLoc(int client, int args) {
 	bool nearCeiling = GetClientDistanceToCeiling(client) <= 25.0;
 
 	if (nearGround && nearCeiling) {
-		PrintToChat(client, "\x01[\x03SL\x01] Unable to save here, might get stuck");
+		PrintMessageToClient(client, "Unable to save here - may get%s stuck", THEMECOLOR2);
 		return Plugin_Handled;
 	}
 
@@ -219,7 +244,7 @@ public Action cmdSaveLoc(int client, int args) {
 
 	SaveLoc(client, origin, angles, velocity, time);
 
-	PrintToChat(client, "\x01[\x03SL\x01] Saved Loc");
+	PrintMessageToClient(client, "%sLoc Saved", THEMECOLOR2);
 
 	return Plugin_Handled;
 }
@@ -230,12 +255,12 @@ public Action cmdTeleLoc(int client, int args) {
 	}
 
 	if (g_cvarRequireEnable.BoolValue && !IsClientPracticing(client)) {
-		PrintToChat(client, "\x01[\x03SL\x01] Type /%s prior to using this command", COMMAND_PRACTICE);
+		PrintMessageToClient(client, "Type%s /%s\x01 prior to using this command", THEMECOLOR2, COMMAND_PRACTICE);
 		return Plugin_Handled;
 	}
 
 	if (IsZeroVector(g_vOrigin[client])) {
-		PrintToChat(client, "\x01[\x03SL\x01] No teleport to retrieve");
+		PrintMessageToClient(client, "No teleport to retrieve");
 		return Plugin_Handled;
 	}
 
@@ -258,7 +283,7 @@ public Action cmdSetLoc(int client, int args) {
 	}
 
 	if (g_cvarRequireEnable.BoolValue && !IsClientPracticing(client)) {
-		PrintToChat(client, "\x01[\x03SL\x01] Type /%s prior to using this command", COMMAND_PRACTICE);
+		PrintMessageToClient(client, "Type%s /%s\x01 prior to using this command", THEMECOLOR2, COMMAND_PRACTICE);
 		return Plugin_Handled;
 	}
 
@@ -270,11 +295,11 @@ public Action cmdSetLoc(int client, int args) {
 			return Plugin_Handled;
 		}
 		if (g_cvarForceSameTeam.BoolValue && GetClientTeam(client) != GetClientTeam(target)) {
-			PrintToChat(client, "\x01[\x03SL\x01] Can't use saves from target on another team");
+			PrintMessageToClient(client, "Can't use saves from target on another team");
 			return Plugin_Handled;
 		}
 		if (g_bTF2 && g_cvarForceSameClass.BoolValue && TF2_GetPlayerClass(client) != TF2_GetPlayerClass(target)) {
-			PrintToChat(client, "\x01[\x03SL\x01] Can't use saves from target on another class");
+			PrintMessageToClient(client, "Can't use saves from target on another class");
 			return Plugin_Handled;
 		}
 	}
@@ -292,7 +317,7 @@ public Action cmdRemoveLoc(int client, int args) {
 	}
 
 	if (g_cvarRequireEnable.BoolValue && !IsClientPracticing(client)) {
-		PrintToChat(client, "\x01[\x03SL\x01] Type /%s prior to using this command", COMMAND_PRACTICE);
+		PrintMessageToClient(client, "Type%s /%s prior to using this command", THEMECOLOR2, COMMAND_PRACTICE);
 		return Plugin_Handled;
 	}
 
@@ -308,7 +333,7 @@ void ShowLocMenu(int client, int target, bool remove = false) {
 	}
 
 	if (!g_iCount[target]) {
-		PrintToChat(client, "%s no saves available for use", (client == target) ? "You have" : "Target has");
+		PrintMessageToClient(client, "%s no saves available for use", (client == target) ? "You have" : "Target has");
 		return;
 	}
 
@@ -658,4 +683,21 @@ float GetClientDistanceToCeiling(int client) {
 
 bool TraceRayNoPlayers(int entity, int mask) {
 	return entity > MaxClients;
+}
+
+void PrintMessageToClient(int client, char[] message, any ...) {
+	if (!IsClientInGame(client)) {
+		return;
+	}
+	char output[1024];
+	VFormat(output, sizeof(output), message, 3);
+
+	char tag[24];
+	Format(tag, sizeof(tag), MESSAGETAG, THEMECOLOR1);
+	if (g_bTF2 && g_cvarCustomColor.BoolValue) {
+		PrintColoredChat(client, "%s%s", tag, output);
+	}
+	else {
+		PrintToChat(client, "\x01%s%s", tag, output);
+	}
 }
