@@ -17,7 +17,7 @@ See include file for plugin integration
 `sm_saveloc_wipeonteam "1"` // Should the plugin wipe saves on team change?  
 `sm_saveloc_wipeonclass "1"` // Should the plugin wipe saves on class change?  
 
-### Examples of plugin integration:  
+### Example of plugin integration:  
 [Ref 1 - Checking library](https://github.com/JoinedSenses/TF2-ECJ-JumpAssist/blob/1ba05f6ff59c79afb1d6ee0bdbf6771c50b7444c/scripting/jumpassist.sp#L260)  
 [Ref 2 - Using a native](https://github.com/JoinedSenses/TF2-ECJ-JumpAssist/blob/1ba05f6ff59c79afb1d6ee0bdbf6771c50b7444c/scripting/jumpassist.sp#L1040-L1043)  
 [Ref 3 - Using a forward](https://github.com/JoinedSenses/TF2-ECJ-JumpAssist/blob/1ba05f6ff59c79afb1d6ee0bdbf6771c50b7444c/scripting/jumpassist/sl.sp)  
