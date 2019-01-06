@@ -9,7 +9,7 @@
 #include <tf2_stocks>
 #define REQUIRE_PLUGIN
 
-#define PLUGIN_VERSION "0.2.2"
+#define PLUGIN_VERSION "0.2.3"
 #define PLUGIN_DESCRIPTION "Retain position, angle, and velocity data"
 #define COMMAND_PRACTICE "practice"
 
@@ -17,6 +17,7 @@ ConVar g_cvarRequireEnable;
 ConVar g_cvarAllowOther;
 ConVar g_cvarForceSameTeam;
 ConVar g_cvarForceSameClass;
+ConVar g_cvarWipeOnToggle;
 ConVar g_cvarWipeOnTeam;
 ConVar g_cvarWipeOnClass;
 ConVar g_cvarCustomColor;
@@ -79,6 +80,7 @@ public void OnPluginStart() {
 	g_cvarWipeOnTeam = CreateConVar("sm_saveloc_wipeonteam", "1", "Should the plugin wipe saves on team change?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarWipeOnClass = CreateConVar("sm_saveloc_wipeonclass", "1", "Should the plugin wipe saves on class change?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarCustomColor = CreateConVar("sm_saveloc_customcolor", "1", "Should the plugin use custom THEMECOLOR in messages? (TF2)", FCVAR_NONE, true, 0.0, true, 1.0);
+	g_cvarWipeOnToggle = CreateConVar("sm_saveloc_wipeontoggle", "1", "Should the plugin wipe saves on practice toggle?", FCVAR_NONE, true, 0.0, true, 1.0);
 
 	g_cvarCustomColor.AddChangeHook(convarChangedCustomColor);
 
@@ -180,7 +182,11 @@ public Action cmdEnable(int client, int args) {
 
 	g_bEnabled[client] = !g_bEnabled[client];
 	PrintMessageToClient(client, "Practice mode%s %s", THEMECOLOR2, g_bEnabled[client] ? "enabled" : "disabled");
-	ClearClientSettings(client);
+
+	if (g_cvarWipeOnToggle.BoolValue) {
+		ClearClientSettings(client);
+	}
+
 	return Plugin_Handled;
 }
 
