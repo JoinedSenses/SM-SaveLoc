@@ -123,21 +123,6 @@ public void OnClientConnected(int client) {
 	ClearClientSettings(client);
 }
 
-void FormatColors() {
-	if (g_bTF2 && g_cvarCustomColor.BoolValue) {
-		HookEvent("player_changeclass", eventPlayerChangeClass);
-
-		Format(THEMECOLOR1, sizeof(THEMECOLOR1), CUSTOMCOLOR1);
-		Format(THEMECOLOR2, sizeof(THEMECOLOR2), CUSTOMCOLOR2);
-	}
-	else {
-		HookEvent("player_class", eventPlayerChangeClass);
-
-		Format(THEMECOLOR1, sizeof(THEMECOLOR1), DEFAULTCOLOR);
-		Format(THEMECOLOR2, sizeof(THEMECOLOR2), DEFAULTCOLOR);
-	}
-}
-
 // ----------------- Events/Hooks
 
 public void convarChangedCustomColor(ConVar convar, const char[] oldValue, const char[] newValue) {
@@ -555,6 +540,21 @@ public int Native_ClearAllSaves(Handle plugin, int numParams) {
 }
 
 // ----------------- Internal method/stocks
+
+void FormatColors() {
+	if (g_bTF2 && g_cvarCustomColor.BoolValue) {
+		HookEvent("player_changeclass", eventPlayerChangeClass);
+
+		Format(THEMECOLOR1, sizeof(THEMECOLOR1), CUSTOMCOLOR1);
+		Format(THEMECOLOR2, sizeof(THEMECOLOR2), CUSTOMCOLOR2);
+	}
+	else {
+		HookEvent("player_class", eventPlayerChangeClass);
+
+		Format(THEMECOLOR1, sizeof(THEMECOLOR1), DEFAULTCOLOR);
+		Format(THEMECOLOR2, sizeof(THEMECOLOR2), DEFAULTCOLOR);
+	}
+}
 
 bool IsClientPracticing(int client) {
 	return g_bEnabled[client];
