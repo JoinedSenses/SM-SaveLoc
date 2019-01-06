@@ -77,10 +77,10 @@ public void OnPluginStart() {
 	g_cvarAllowOther = CreateConVar("sm_saveloc_allowother", "1", "Allows clients to use other players' saves?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarForceSameTeam = CreateConVar("sm_saveloc_forceteam", "1", "Only allow client to use saves from players on their own team?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarForceSameClass = CreateConVar("sm_saveloc_forceclass", "1", "Only allow clients to use saves from players of their own class? (TF2)", FCVAR_NONE, true, 0.0, true, 1.0);
+	g_cvarWipeOnToggle = CreateConVar("sm_saveloc_wipeontoggle", "1", "Should the plugin wipe saves on practice toggle?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarWipeOnTeam = CreateConVar("sm_saveloc_wipeonteam", "1", "Should the plugin wipe saves on team change?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarWipeOnClass = CreateConVar("sm_saveloc_wipeonclass", "1", "Should the plugin wipe saves on class change?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarCustomColor = CreateConVar("sm_saveloc_customcolor", "1", "Should the plugin use custom THEMECOLOR in messages? (TF2)", FCVAR_NONE, true, 0.0, true, 1.0);
-	g_cvarWipeOnToggle = CreateConVar("sm_saveloc_wipeontoggle", "1", "Should the plugin wipe saves on practice toggle?", FCVAR_NONE, true, 0.0, true, 1.0);
 
 	g_cvarCustomColor.AddChangeHook(convarChangedCustomColor);
 
