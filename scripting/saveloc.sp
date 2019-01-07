@@ -9,12 +9,13 @@
 #include <tf2_stocks>
 #define REQUIRE_PLUGIN
 
-#define PLUGIN_VERSION "0.2.4"
+#define PLUGIN_VERSION "0.2.5"
 #define PLUGIN_DESCRIPTION "Retain position, angle, and velocity data"
 #define COMMAND_PRACTICE "practice"
 
 ConVar g_cvarRequireEnable;
 ConVar g_cvarRequireOnGround;
+ConVar g_cvarRestoreOnToggle;
 ConVar g_cvarAllowOther;
 ConVar g_cvarForceSameTeam;
 ConVar g_cvarForceSameClass;
@@ -44,6 +45,10 @@ float g_vOrigin[MAXPLAYERS+1][3];
 float g_vAngles[MAXPLAYERS+1][3];
 float g_vVelocity[MAXPLAYERS+1][3];
 float g_fTime[MAXPLAYERS+1];
+// Restoration location
+float g_vPracticeOrigin[MAXPLAYERS+1][3];
+float g_vPracticeAngles[MAXPLAYERS+1][3];
+float zeroVector[3];
 
 bool g_bTF2;
 bool g_bEnabled[MAXPLAYERS+1];
@@ -76,6 +81,7 @@ public void OnPluginStart() {
 	CreateConVar("sm_saveloc_version", PLUGIN_VERSION, PLUGIN_DESCRIPTION, FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD).SetString(PLUGIN_VERSION);
 	g_cvarRequireEnable = CreateConVar("sm_saveloc_requireenable", "1", "Require the client activate a toggle before using commands?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarRequireOnGround = CreateConVar("sm_saveloc_onground", "1", "Require the client to be on the ground while enabling practice toggle?");
+	g_cvarRestoreOnToggle = CreateConVar("sm_saveloc_restoreontoggle", "1", "Save and restore client location on toggle of practice command?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarAllowOther = CreateConVar("sm_saveloc_allowother", "1", "Allows clients to use other players' saves?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarForceSameTeam = CreateConVar("sm_saveloc_forceteam", "1", "Only allow client to use saves from players on their own team?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarForceSameClass = CreateConVar("sm_saveloc_forceclass", "1", "Only allow clients to use saves from players of their own class? (TF2)", FCVAR_NONE, true, 0.0, true, 1.0);
@@ -135,6 +141,17 @@ public void OnClientConnected(int client) {
 	ClearClientSettings(client);
 }
 
+public void OnPluginEnd() {
+	if (g_cvarRestoreOnToggle.BoolValue) {
+		for (int i = 1; i <= MaxClients; i++) {
+			if (g_bEnabled[i]) {
+				RestorePracticeLocation(i);
+				PrintMessageToClient(i, "Plugin reloading: Restoring location");
+			}
+		}
+	}
+}
+
 // ----------------- Events/Hooks
 
 public void convarChangedCustomColor(ConVar convar, const char[] oldValue, const char[] newValue) {
@@ -190,8 +207,18 @@ public Action cmdEnable(int client, int args) {
 	g_bEnabled[client] = !g_bEnabled[client];
 	PrintMessageToClient(client, "Practice mode%s %s", THEMECOLOR2, g_bEnabled[client] ? "enabled" : "disabled");
 
-	if (g_cvarWipeOnToggle.BoolValue) {
-		ClearClientSettings(client);
+	if (!g_bEnabled[client]) {
+		if (g_cvarRestoreOnToggle.BoolValue) {
+			RestorePracticeLocation(client);
+		}
+		if (g_cvarWipeOnToggle.BoolValue) {
+			ClearClientSettings(client);
+		}
+	}
+	else {
+		if (g_cvarRestoreOnToggle.BoolValue) {
+			SavePracticeLocation(client);
+		}
 	}
 
 	return Plugin_Handled;
@@ -654,6 +681,15 @@ void RemoveClientSave(int client, int position) {
 	if (same && g_iCurrent[client] == position || g_iCurrent[client] == g_iCount[client]) {
 		GetClientSave(client, --g_iCurrent[client], g_vOrigin[client], g_vAngles[client], g_vVelocity[client]);
 	}
+}
+
+void SavePracticeLocation(int client) {
+	GetClientAbsOrigin(client, g_vPracticeOrigin[client]);
+	GetClientAbsAngles(client, g_vPracticeAngles[client]);
+}
+
+void RestorePracticeLocation(int client) {
+	TeleportEntity(client, g_vPracticeOrigin[client], g_vPracticeAngles[client], zeroVector);
 }
 
 void ClearClientSettings(int client) {
