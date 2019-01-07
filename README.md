@@ -22,6 +22,6 @@ See include file for plugin integration
 ### Example of plugin integration:  
 [Ref 1 - Checking library](https://github.com/JoinedSenses/TF2-ECJ-JumpAssist/blob/336fa59af75a2136c69e414f81416543c1ffb8bf/scripting/jumpassist.sp#L293-L295)  
 [Ref 2 - Using a native](https://github.com/JoinedSenses/TF2-ECJ-JumpAssist/blob/1ba05f6ff59c79afb1d6ee0bdbf6771c50b7444c/scripting/jumpassist.sp#L1040-L1043)  
-[Ref 3 - Using a forward](https://github.com/JoinedSenses/TF2-ECJ-JumpAssist/blob/1ba05f6ff59c79afb1d6ee0bdbf6771c50b7444c/scripting/jumpassist/sl.sp#L9-L33)  
+[Ref 3 - Using a forward](https://github.com/JoinedSenses/TF2-ECJ-JumpAssist/blob/9b6ee08c22a6425bf3cccafd957bc98444f7c375/scripting/jumpassist/sl.sp#L7-L29)  
 
 ![Menu Image](https://i.imgur.com/UhW4WxB.png)
