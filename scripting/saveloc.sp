@@ -164,6 +164,7 @@ public Action eventPlayerChangeTeam(Event event, const char[] name, bool dontBro
 	if (!g_cvarWipeOnTeam.BoolValue) {
 		return;
 	}
+
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	if (!IsFakeClient(client)) {
 		ClearClientSettings(client);
@@ -175,6 +176,7 @@ public Action eventPlayerChangeClass(Event event, const char[] name, bool dontBr
 	if (!g_cvarWipeOnClass.BoolValue) {
 		return Plugin_Continue;
 	}
+
 	int client = GetClientOfUserId(event.GetInt("userid"));
 	if (!IsFakeClient(client)) {
 		ClearClientSettings(client);
@@ -337,10 +339,12 @@ public Action cmdSetLoc(int client, int args) {
 		if ((target = FindTarget(client, arg, true, false)) == -1) {
 			return Plugin_Handled;
 		}
+
 		if (g_cvarForceSameTeam.BoolValue && GetClientTeam(client) != GetClientTeam(target)) {
 			PrintMessageToClient(client, "Can't use saves from target on another team");
 			return Plugin_Handled;
 		}
+
 		if (g_bTF2 && g_cvarForceSameClass.BoolValue && TF2_GetPlayerClass(client) != TF2_GetPlayerClass(target)) {
 			PrintMessageToClient(client, "Can't use saves from target on another class");
 			return Plugin_Handled;
@@ -473,9 +477,11 @@ public int Native_IsClientPracticing(Handle plugin, int numParams) {
 	if (client < 1 || client > MaxClients) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Invalid client index (%d)", client);
 	}
+
 	if (!IsClientConnected(client)) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Client %d is not connected", client);
 	}
+
 	return g_bEnabled[client];
 }
 
@@ -484,9 +490,11 @@ public int Native_DisablePractice(Handle plugin, int numParams) {
 	if (client < 1 || client > MaxClients) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Invalid client index (%d)", client);
 	}
+
 	if (!IsClientConnected(client)) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Client %d is not connected", client);
 	}
+
 	if (g_bEnabled[client]) {
 		g_bEnabled[client] = false;
 		if (GetNativeCell(2)) {
@@ -501,9 +509,11 @@ public int Native_GetClientTotalCount(Handle plugin, int numParams) {
 	if (client < 1 || client > MaxClients) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Invalid client index (%d)", client);
 	}
+
 	if (!IsClientConnected(client)) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Client %d is not connected", client);
 	}
+
 	return g_iCount[client];
 } 
 
@@ -512,9 +522,11 @@ public int Native_GetClientCurrentIndex(Handle plugin, int numParams) {
 	if (client < 1 || client > MaxClients) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Invalid client index (%d)", client);
 	}
+
 	if (!IsClientConnected(client)) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Client %d is not connected", client);
 	}
+
 	return g_iCurrent[client];
 }
 
@@ -523,6 +535,7 @@ public int Native_GetClientCurrentSave(Handle plugin, int numParams) {
 	if (client < 1 || client > MaxClients) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Invalid client index (%d)", client);
 	}
+
 	if (!IsClientConnected(client)) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Client %d is not connected", client);
 	}
@@ -544,13 +557,16 @@ public int Native_GetClientSaveAtIndex(Handle plugin, int numParams) {
 	if (client < 1 || client > MaxClients) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Invalid client index (%d)", client);
 	}
+
 	if (!IsClientConnected(client)) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Client %d is not connected", client);
 	}
+
 	int index = GetNativeCell(2);
 	if (index < 0 || index >= g_iCount[client]) {
 		return false;
 	}
+
 	float origin[3];
 	float angles[3];
 	float velocity[3];
@@ -561,6 +577,7 @@ public int Native_GetClientSaveAtIndex(Handle plugin, int numParams) {
 	SetNativeArray(3, angles, 3);
 	SetNativeArray(4, velocity, 3);
 	SetNativeCellRef(5, time);
+	
 	return true;
 }
 
@@ -569,6 +586,7 @@ public int Native_AddToSaves(Handle plugin, int numParams) {
 	if (client < 1 || client > MaxClients) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Invalid client index (%d)", client);
 	}
+
 	if (!IsClientConnected(client)) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Client %d is not connected", client);
 	}
@@ -594,9 +612,11 @@ public int Native_ClearAllSaves(Handle plugin, int numParams) {
 	if (client < 1 || client > MaxClients) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Invalid client index (%d)", client);
 	}
+
 	if (!IsClientConnected(client)) {
 		return ThrowNativeError(SP_ERROR_NATIVE, "Client %d is not connected", client);
 	}
+
 	ClearClientSettings(client);
 	return 1;
 }
@@ -605,12 +625,12 @@ public int Native_ClearAllSaves(Handle plugin, int numParams) {
 
 void FormatColors() {
 	if (g_bTF2 && g_cvarCustomColor.BoolValue) {
-		Format(THEMECOLOR1, sizeof(THEMECOLOR1), CUSTOMCOLOR1);
-		Format(THEMECOLOR2, sizeof(THEMECOLOR2), CUSTOMCOLOR2);
+		strcopy(THEMECOLOR1, sizeof(THEMECOLOR1), CUSTOMCOLOR1);
+		strcopy(THEMECOLOR2, sizeof(THEMECOLOR2), CUSTOMCOLOR2);
 	}
 	else {
-		Format(THEMECOLOR1, sizeof(THEMECOLOR1), DEFAULTCOLOR);
-		Format(THEMECOLOR2, sizeof(THEMECOLOR2), DEFAULTCOLOR);
+		strcopy(THEMECOLOR1, sizeof(THEMECOLOR1), DEFAULTCOLOR);
+		strcopy(THEMECOLOR2, sizeof(THEMECOLOR2), DEFAULTCOLOR);
 	}
 
 	Format(PLUGINTAG, sizeof(PLUGINTAG), MESSAGETAG, THEMECOLOR1);
@@ -649,6 +669,7 @@ void GetClientSave(int client, int position, float origin[3], float angles[3], f
 	if (position < 0 || position > g_iCount[client]) {
 		return;
 	}
+
 	if (!IsNullVector(origin)) {
 		g_aOrigin[client].GetArray(position, origin, sizeof(origin));
 	}
@@ -658,6 +679,7 @@ void GetClientSave(int client, int position, float origin[3], float angles[3], f
 	if (!IsNullVector(velocity)) {
 		g_aVelocity[client].GetArray(position, velocity, sizeof(velocity));
 	}
+
 	time = g_aTime[client].Get(position);
 }
 
@@ -678,6 +700,7 @@ void RemoveClientSave(int client, int position) {
 		g_iCurrent[client] = -1;
 		return;
 	}
+
 	if (same && g_iCurrent[client] == position || g_iCurrent[client] == g_iCount[client]) {
 		GetClientSave(client, --g_iCurrent[client], g_vOrigin[client], g_vAngles[client], g_vVelocity[client]);
 	}
@@ -758,6 +781,7 @@ void PrintMessageToClient(int client, char[] message, any ...) {
 	if (!IsClientInGame(client)) {
 		return;
 	}
+
 	char output[1024];
 	VFormat(output, sizeof(output), message, 3);
 
