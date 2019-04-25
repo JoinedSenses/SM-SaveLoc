@@ -6,7 +6,7 @@ See include file for plugin integration
 `sm_practice` - Enable practice mode - only required if cvar is set  
 `sm_sl` - Save loc  
 `sm_tl` - Tele loc  
-`sm_ml` - Loc menu (Allows chosing from one of 10 recent saves)  
+`sm_ml <optional:playerName>` - Loc menu (Allows chosing from one of 10 recent saves)  
 `sm_rl` - Remove Loc - Opens menu to select a save to remove  
 
 ## ConVars
