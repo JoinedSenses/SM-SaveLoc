@@ -118,7 +118,7 @@ public void OnPluginStart() {
 	g_bTF2 = StrEqual(gamename, "tf", false);
 
 
-	if (g_bTF2 && g_cvarCustomColor.BoolValue) {
+	if (g_bTF2) {
 		HookEvent("player_changeclass", eventPlayerChangeClass);
 	}
 	else {
