@@ -9,7 +9,7 @@
 #include <tf2_stocks>
 #define REQUIRE_PLUGIN
 
-#define PLUGIN_VERSION "0.2.6"
+#define PLUGIN_VERSION "0.2.7"
 #define PLUGIN_DESCRIPTION "Retain position, angle, and velocity data"
 #define COMMAND_PRACTICE "practice"
 
