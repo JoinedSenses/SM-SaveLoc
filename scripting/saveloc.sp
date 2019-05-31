@@ -368,6 +368,19 @@ public Action cmdRemoveLoc(int client, int args) {
 		return Plugin_Handled;
 	}
 
+	if (args) {
+		char arg[32];
+		if (args && g_cvarAllowOther.BoolValue) {
+			GetCmdArg(1, arg, sizeof(arg));
+
+			if (StrEqual(arg, "all", false)) {
+				ClearClientSettings(client);
+				PrintMessageToClient(client, "All saves have been%s cleared", THEMECOLOR2);
+				return Plugin_Handled;
+			}
+		}
+	}
+
 	ShowLocMenu(client, client, true);
 	return Plugin_Handled;
 }
