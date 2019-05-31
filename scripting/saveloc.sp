@@ -118,7 +118,7 @@ public void OnPluginStart() {
 	g_bTF2 = StrEqual(gamename, "tf", false);
 
 
-	if (g_bTF2) {
+	if (g_bTF2 && g_cvarCustomColor.BoolValue) {
 		HookEvent("player_changeclass", eventPlayerChangeClass);
 	}
 	else {
@@ -364,20 +364,18 @@ public Action cmdRemoveLoc(int client, int args) {
 	}
 
 	if (g_cvarRequireEnable.BoolValue && !IsClientPracticing(client)) {
-		PrintMessageToClient(client, "Type%s /%s prior to using this command", THEMECOLOR2, COMMAND_PRACTICE);
+		PrintMessageToClient(client, "Type%s /%s\x01 prior to using this command", THEMECOLOR2, COMMAND_PRACTICE);
 		return Plugin_Handled;
 	}
 
 	if (args) {
 		char arg[32];
-		if (args && g_cvarAllowOther.BoolValue) {
-			GetCmdArg(1, arg, sizeof(arg));
+		GetCmdArg(1, arg, sizeof(arg));
 
-			if (StrEqual(arg, "all", false)) {
-				ClearClientSettings(client);
-				PrintMessageToClient(client, "All saves have been%s cleared", THEMECOLOR2);
-				return Plugin_Handled;
-			}
+		if (StrEqual(arg, "all", false)) {
+			ClearClientSettings(client);
+			PrintMessageToClient(client, "All saves have been%s cleared", THEMECOLOR2);
+			return Plugin_Handled;
 		}
 	}
 
