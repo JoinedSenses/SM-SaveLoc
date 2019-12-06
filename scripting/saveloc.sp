@@ -31,9 +31,9 @@ ArrayList g_aVelocity[MAXPLAYERS+1];
 ArrayList g_aTime[MAXPLAYERS+1];
 
 // Forwards
-Handle g_hForwardOnEnable;
-Handle g_hForwardOnSaveLoc;
-Handle g_hForwardOnTeleLoc;
+GlobalForward g_hForwardOnEnable;
+GlobalForward g_hForwardOnSaveLoc;
+GlobalForward g_hForwardOnTeleLoc;
 
 // int arrays for tracking
 int g_iCount[MAXPLAYERS+1];
@@ -100,9 +100,9 @@ public void OnPluginStart() {
 	RegConsoleCmd("sm_ml", cmdSetLoc, "Select from a list of recent saves - sm_ml <optional:targetname>");
 	RegConsoleCmd("sm_rl", cmdRemoveLoc, "Remove from a list of recent saves - sm_rl");
 
-	g_hForwardOnEnable = CreateGlobalForward("SL_OnPracticeToggle", ET_Event, Param_Cell);
-	g_hForwardOnSaveLoc = CreateGlobalForward("SL_OnSaveLoc", ET_Event, Param_Cell, Param_Array, Param_Array, Param_Array, Param_Float);
-	g_hForwardOnTeleLoc = CreateGlobalForward("SL_OnTeleLoc", ET_Event, Param_Cell);
+	g_hForwardOnEnable = new GlobalForward("SL_OnPracticeToggle", ET_Event, Param_Cell);
+	g_hForwardOnSaveLoc = new GlobalForward("SL_OnSaveLoc", ET_Event, Param_Cell, Param_Array, Param_Array, Param_Array, Param_Float);
+	g_hForwardOnTeleLoc = new GlobalForward("SL_OnTeleLoc", ET_Event, Param_Cell);
 
 	LoadTranslations("common.phrases.txt");
 
@@ -118,8 +118,10 @@ public void OnPluginStart() {
 	g_bTF2 = StrEqual(gamename, "tf", false);
 
 
-	if (g_bTF2 && g_cvarCustomColor.BoolValue) {
-		HookEvent("player_changeclass", eventPlayerChangeClass);
+	if (g_bTF2) {
+		if (g_cvarCustomColor.BoolValue) {
+			HookEvent("player_changeclass", eventPlayerChangeClass);
+		}
 	}
 	else {
 		HookEvent("player_class", eventPlayerChangeClass);
