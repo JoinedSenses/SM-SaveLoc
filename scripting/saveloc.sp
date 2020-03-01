@@ -78,7 +78,7 @@ public APLRes AskPluginLoad2(Handle myself, bool late, char[] error, int err_max
 }
 
 public void OnPluginStart() {
-	CreateConVar("sm_saveloc_version", PLUGIN_VERSION, PLUGIN_DESCRIPTION, FCVAR_SPONLY|FCVAR_REPLICATED|FCVAR_NOTIFY|FCVAR_DONTRECORD).SetString(PLUGIN_VERSION);
+	CreateConVar("sm_saveloc_version", PLUGIN_VERSION, PLUGIN_DESCRIPTION, FCVAR_SPONLY|FCVAR_NOTIFY|FCVAR_DONTRECORD).SetString(PLUGIN_VERSION);
 	g_cvarRequireEnable = CreateConVar("sm_saveloc_requireenable", "1", "Require the client activate a toggle before using commands?", FCVAR_NONE, true, 0.0, true, 1.0);
 	g_cvarRequireOnGround = CreateConVar("sm_saveloc_onground", "1", "Require the client to be on the ground while enabling practice toggle?");
 	g_cvarRestoreOnToggle = CreateConVar("sm_saveloc_restoreontoggle", "1", "Save and restore client location on toggle of practice command?", FCVAR_NONE, true, 0.0, true, 1.0);
